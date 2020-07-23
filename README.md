@@ -14,7 +14,7 @@ With this application, a user can:
 
 ## Application
 
-[![Video of how it works!](https://img.youtube.com/vi/Aw8muaix7sc/0.jpg](https://youtu.be/Aw8muaix7sc)
+[Video of how it works!](https://youtu.be/Aw8muaix7sc)
 
 
 
