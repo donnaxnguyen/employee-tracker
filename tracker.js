@@ -1,93 +1,90 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-const consoleTable = require("console.table");
-const promisemysql = require("promise-mysql");
+const consoleTable = require("console.table")
 
-// Connection Properties
-const connectionProperties = {
+// CREATING MY CONNECTION TO SQL DATABASE
+const connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
     password: "password",
     database: "employees_DB"
-}
+})
 
-// Creating Connection
-const connection = mysql.createConnection(connectionProperties);
-
-
-// Establishing Connection to database
-connection.connect((err) => {
+// CONNECT TO THE MYSQL SERVER AND SQL DATABASE
+connection.connect(function(err){
     if (err) throw err;
+    startApp();
+})
 
-    // Start main menu function
-
-    console.log("\n WELCOME TO MY EMPLOYEE TRACKER \n");
-    mainMenu();
-});
-
-// Main menu function
-function mainMenu(){
-
-    // Prompt user to choose an option
+function startApp() {
     inquirer
     .prompt({
-      name: "action",
-      type: "list",
-      message: "MAIN MENU",
-      choices: [
-        "View all employees",
-        "View all employees by department",
-        "View all employees by manager",
-        "Add Employee",
-        "Delete Employee",
-        "Update Employee role",
-        "Update Employee manager",
-        "Add role",
-        "Delete role",
-      ]
-    })
-    .then((answer) => {
-
-        // Switch case depending on user option
+        name: "action",
+        type: "list",
+        message: "Welcome to our employee database! What would you like to do?",
+        choices: [
+                "View all employees",
+                "View all departments",
+                "View all roles",
+                "Add an employee",
+                "Add department",
+                "Add a role",
+                "EXIT"
+        ]
+    }).then(function (answer) {
         switch (answer.action) {
             case "View all employees":
-                viewAllEmp();
+                viewEmployees();
                 break;
-
-            case "View all employees by department":
-                viewAllEmpByDept();
+            case "View all departments":
+                viewDepartments();
                 break;
-            
-            case "View all employees by manager":
-                viewAllEmpByMngr();
+            case "View all roles":
+                viewRoles();
                 break;
-
-            case "Add employee":
-                addEmp();
+            case "Add an employee":
+                addEmployee();
                 break;
-
-             case "Delete employee":
-                deleteEmp();
+            case "Add department":
+                addDepartment();
                 break;
-
-            case "Update employee role":
-                updateEmpRole();
-                break;
-
-             case "Update employee manager":
-                updateEmpMngr();
-                break;
-
-            case "Add role":
+            case "Add a role":
                 addRole();
                 break;
-
-            case "Delete role":
-                deleteRole();
+            case "EXIT": 
+                endApp();
                 break;
-
+            default:
+                break;
         }
-    });
+    })
 }
 
+function viewEmployees() {
+    var query = "SELECT * FROM employees";
+    connection.query(query, function(err, res) {
+    if (err) throw err;
+    console.log(res.length + " employees found!");
+    console.table('All Employees:', res); 
+    startApp();
+    })
+}
+
+function viewDepartments() {
+    var query = "SELECT * FROM department";
+    connection.query(query, function(err, res) {
+    if(err)throw err;
+    console.table('All Departments:', res);
+    startApp();
+    })
+}
+
+function viewRoles() {
+    var query = "SELECT * FROM role";
+    connection.query(query, function(err, res){
+    if (err) throw err;
+    console.table('All roles:', res);
+    startApp();
+    })
+}
