@@ -88,3 +88,81 @@ function viewRoles() {
     startApp();
     })
 }
+
+
+function addEmployee() {
+    connection.query("SELECT * FROM role", function (err, res) {
+    if (err) throw err;
+    
+    inquirer
+        .prompt([
+            {
+                name: "first_name",
+                type: "input", 
+                message: "Employee's fist name: ",
+            },
+            {
+                name: "last_name",
+                type: "input", 
+                message: "Employee's last name: "
+            },
+            {
+                name: "role", 
+                type: "list",
+                choices: function() {
+                var roleArray = [];
+                for (let i = 0; i < res.length; i++) {
+                    roleArray.push(res[i].title);
+                }
+                return roleArray;
+                },
+                message: "What is this employee's role? "
+            }
+            ]).then(function (answer) {
+                let roleID;
+                for (let j = 0; j < res.length; j++) {
+                if (res[j].title == answer.role) {
+                    roleID = res[j].id;
+                    console.log(roleID)
+                }                  
+                }  
+                connection.query(
+                "INSERT INTO employees SET ?",
+                {
+                    first_name: answer.first_name,
+                    last_name: answer.last_name,
+                    role_id: roleID,
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("Your employee has been added!");
+                    startApp();
+                }
+                )
+            })
+    })
+}
+
+function addDepartment() {
+    inquirer
+    .prompt([
+        {
+            name: "new_dept", 
+            type: "input", 
+            message: "What is the new department you would like to add?"
+        }
+    ]).then(function (answer) {
+        connection.query(
+            "INSERT INTO department SET ?",
+            {
+                name: answer.new_dept
+            }
+        );
+          var query = "SELECT * FROM department";
+        connection.query(query, function(err, res) {
+        if(err)throw err;
+        console.table('All Departments:', res);
+        startApp();
+        })
+    })
+}
